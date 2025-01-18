@@ -10,7 +10,8 @@
   <name>quarkus-labs</name>
 
   <modules>
-    <module>010-quarkus-hello</module>
+    <module>quarkus-010-hello</module>
+    <module>quarkus-013-hello-lifecycle</module>
   </modules>
 
 </project>
