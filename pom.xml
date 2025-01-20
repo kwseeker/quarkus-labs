@@ -12,8 +12,10 @@
   <modules>
     <module>big-market</module>
     <module>quarkus-010-hello</module>
+    <module>quarkus-011-hello-cdi</module>
     <module>quarkus-013-hello-lifecycle</module>
     <module>vertx-web-010-hello</module>
+    <module>quarkus-011-hello-cdi-provider</module>
   </modules>
 
 </project>
