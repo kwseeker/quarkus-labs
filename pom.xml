@@ -10,6 +10,7 @@
   <name>quarkus-labs</name>
 
   <modules>
+    <module>big-market</module>
     <module>quarkus-010-hello</module>
     <module>quarkus-013-hello-lifecycle</module>
     <module>vertx-web-010-hello</module>
