@@ -1,4 +1,0 @@
-quarkus:
-  http:
-    port: 8080
-    test-port: 8081
