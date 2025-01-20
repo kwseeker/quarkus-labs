@@ -8,10 +8,10 @@
     </parent>
 
     <groupId>top.kwseeker.vertx</groupId>
-    <artifactId>vertx-010-hello</artifactId>
+    <artifactId>vertx-web-010-hello</artifactId>
     <packaging>jar</packaging>
 
-    <name>vertx-010-hello</name>
+    <name>vertx-web-010-hello</name>
 
     <dependencies>
         <dependency>

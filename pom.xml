@@ -12,7 +12,7 @@
   <modules>
     <module>quarkus-010-hello</module>
     <module>quarkus-013-hello-lifecycle</module>
-    <module>vertx-010-hello</module>
+    <module>vertx-web-010-hello</module>
   </modules>
 
 </project>
