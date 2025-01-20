@@ -1,4 +1,4 @@
-package top.kwseeker.market;
+package top.kwseeker.market.infrastructure.dao.po;
 
 import java.util.Date;
 
@@ -74,5 +74,18 @@ public class Award {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    @Override
+    public String toString() {
+        return "Award{" +
+                "id=" + id +
+                ", awardId=" + awardId +
+                ", awardKey='" + awardKey + '\'' +
+                ", awardConfig='" + awardConfig + '\'' +
+                ", awardDesc='" + awardDesc + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
     }
 }

@@ -1,12 +1,12 @@
-package top.kwseeker.market;
+package top.kwseeker.market.trigger.http;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-//import top.kwseeker.market.infrastructure.dao.IAwardDao;
-//import top.kwseeker.market.infrastructure.dao.po.Award;
+import top.kwseeker.market.infrastructure.dao.IAwardDao;
+import top.kwseeker.market.infrastructure.dao.po.Award;
 
 import java.util.List;
 

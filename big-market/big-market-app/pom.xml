@@ -13,18 +13,10 @@
     <name>big-market-app</name>
 
     <dependencies>
-        <!--<dependency>-->
-        <!--    <groupId>top.kwseeker</groupId>-->
-        <!--    <artifactId>big-market-infrastructure</artifactId>-->
-        <!--    <version>${project.version}</version>-->
-        <!--</dependency>-->
         <dependency>
-            <groupId>io.quarkiverse.mybatis</groupId>
-            <artifactId>quarkus-mybatis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-jdbc-mysql</artifactId>
+            <groupId>top.kwseeker</groupId>
+            <artifactId>big-market-infrastructure</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -39,6 +31,8 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-rest-jackson</artifactId>
         </dependency>
+
+        <!-- 测试 -->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5</artifactId>
@@ -48,6 +42,12 @@
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!-- 日志：https://quarkus.pro/guides/logging.html-->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-logging-json</artifactId>
         </dependency>
     </dependencies>
 

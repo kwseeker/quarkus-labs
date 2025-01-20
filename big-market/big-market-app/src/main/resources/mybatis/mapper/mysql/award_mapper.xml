@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!--<mapper namespace="top.kwseeker.market.infrastructure.dao.IAwardDao">-->
-<mapper namespace="top.kwseeker.market.IAwardDao">
+<mapper namespace="top.kwseeker.market.infrastructure.dao.IAwardDao">
 
-    <resultMap id="dataMap" type="top.kwseeker.market.Award">
+    <resultMap id="dataMap" type="top.kwseeker.market.infrastructure.dao.po.Award">
         <id column="id" property="id"/>
         <result column="award_id" property="awardId"/>
         <result column="award_key" property="awardKey"/>

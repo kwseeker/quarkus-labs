@@ -11,7 +11,6 @@
         <module>big-market-app</module>
         <!--<module>big-market-domain</module>-->
         <!--<module>big-market-trigger</module>-->
-        <module>big-market-infrastructure</module>
         <!--<module>big-market-types</module>-->
         <!--<module>big-market-api</module>-->
         <!--<module>big-market-querys</module>-->
@@ -92,6 +91,8 @@
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                         <maven.home>${maven.home}</maven.home>
+                        <!-- 为单元测试配置日志级别 -->
+                        <quarkus.log.level>DEBUG</quarkus.log.level>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

@@ -1,4 +1,4 @@
-package top.kwseeker.market;
+package top.kwseeker.market.app;
 
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.QuarkusApplication;
