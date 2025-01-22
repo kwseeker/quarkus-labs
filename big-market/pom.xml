@@ -9,10 +9,8 @@
 
     <modules>
         <module>big-market-app</module>
-        <!--<module>big-market-domain</module>-->
-        <!--<module>big-market-trigger</module>-->
-        <!--<module>big-market-types</module>-->
         <!--<module>big-market-api</module>-->
+        <module>big-market-types</module>
         <!--<module>big-market-querys</module>-->
     </modules>
 
@@ -28,6 +26,7 @@
         <surefire-plugin.version>3.5.0</surefire-plugin.version>
 
         <quarkus-mybatis.version>2.2.4</quarkus-mybatis.version>
+        <!-- lombok 与 JDK21 兼容的最低版本是 1.18.30 -->
         <lombok.version>1.18.34</lombok.version>
     </properties>
 
@@ -90,7 +89,7 @@
                 <configuration>
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                        <maven.home>${maven.home}</maven.home>
+                        <!--<maven.home>${maven.home}</maven.home>-->
                         <!-- 为单元测试配置日志级别 -->
                         <quarkus.log.level>DEBUG</quarkus.log.level>
                     </systemPropertyVariables>
@@ -112,7 +111,7 @@
                         <native.image.path>${project.build.directory}/${project.build.finalName}-runner
                         </native.image.path>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                        <maven.home>${maven.home}</maven.home>
+                        <!--<maven.home>${maven.home}</maven.home>-->
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

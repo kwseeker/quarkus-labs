@@ -1,21 +1,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>top.kwseeker</groupId>
-  <artifactId>quarkus-labs</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
+    <groupId>top.kwseeker</groupId>
+    <artifactId>quarkus-labs</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-  <name>quarkus-labs</name>
+    <name>quarkus-labs</name>
 
-  <modules>
-    <module>big-market</module>
-    <module>quarkus-010-hello</module>
-    <module>quarkus-011-hello-cdi</module>
-    <module>quarkus-013-hello-lifecycle</module>
-    <module>vertx-web-010-hello</module>
-    <module>quarkus-011-hello-cdi-provider</module>
-  </modules>
+    <modules>
+        <module>big-market</module>
+        <module>quarkus-010-hello</module>
+        <module>quarkus-011-hello-cdi</module>
+        <module>quarkus-011-hello-cdi-provider</module>
+        <module>quarkus-013-hello-lifecycle</module>
+        <module>quarkus-033-sample-redisson</module>
+        <module>vertx-web-010-hello</module>
+    </modules>
 
 </project>

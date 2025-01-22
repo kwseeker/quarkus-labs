@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>top.kwseeker</groupId>
-            <artifactId>big-market-infrastructure</artifactId>
+            <artifactId>big-market-types</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -32,6 +32,38 @@
             <artifactId>quarkus-rest-jackson</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.quarkiverse.mybatis</groupId>
+            <artifactId>quarkus-mybatis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jdbc-mysql</artifactId>
+        </dependency>
+        <!-- Redisson: https://redisson.org/docs/microservices-integration/#quarkus -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-quarkus-30</artifactId>
+            <version>3.26.0</version>
+        </dependency>
+        <!-- redisson-quarkus 不会自动将 redisson 引入进来 -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.26.0</version>
+        </dependency>
+
+        <!-- 日志：https://quarkus.pro/guides/logging.html-->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-logging-json</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
         <!-- 测试 -->
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -42,12 +74,6 @@
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <!-- 日志：https://quarkus.pro/guides/logging.html-->
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-logging-json</artifactId>
         </dependency>
     </dependencies>
 
