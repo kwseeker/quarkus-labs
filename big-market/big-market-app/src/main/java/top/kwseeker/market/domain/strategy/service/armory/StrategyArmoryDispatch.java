@@ -7,7 +7,7 @@ import jakarta.inject.Inject;
 import top.kwseeker.market.domain.strategy.model.entity.StrategyAwardEntity;
 import top.kwseeker.market.domain.strategy.service.armory.algorithm.AbstractAlgorithm;
 import top.kwseeker.market.domain.strategy.service.armory.algorithm.IAlgorithm;
-import top.kwseeker.market.infrastructure.quarkus.BeanNameSelector;
+import top.kwseeker.market.infrastructure.quarkus.CDIBeanSelector;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
@@ -38,11 +38,13 @@ public class StrategyArmoryDispatch extends AbstractStrategyAlgorithm {
         double rateRange = convert(BigDecimal.valueOf(minAwardRate.doubleValue()));
         // 3. 根据概率值范围选择算法
         if (rateRange <= ALGORITHM_THRESHOLD_VALUE) {
-            IAlgorithm o1Algorithm = BeanNameSelector.select(algorithms, AbstractAlgorithm.Algorithm.O1.getKey());
+            log.debug("策略抽奖算法装配，key:{}, rateRange:{}, 使用算法：{}", key, rateRange, AbstractAlgorithm.Algorithm.O1.getKey());
+            IAlgorithm o1Algorithm = CDIBeanSelector.select(algorithms, AbstractAlgorithm.Algorithm.O1.getKey());
             o1Algorithm.armoryAlgorithm(key, strategyAwardEntities, new BigDecimal(rateRange));
             repository.cacheStrategyArmoryAlgorithm(key, AbstractAlgorithm.Algorithm.O1.getKey());
         } else {
-            IAlgorithm oLogNAlgorithm = BeanNameSelector.select(algorithms, AbstractAlgorithm.Algorithm.OLogN.getKey());
+            log.debug("策略抽奖算法装配，key:{}, rateRange:{}, 使用算法：{}", key, rateRange, AbstractAlgorithm.Algorithm.OLogN.getKey());
+            IAlgorithm oLogNAlgorithm = CDIBeanSelector.select(algorithms, AbstractAlgorithm.Algorithm.OLogN.getKey());
             oLogNAlgorithm.armoryAlgorithm(key, strategyAwardEntities, new BigDecimal(rateRange));
             repository.cacheStrategyArmoryAlgorithm(key, AbstractAlgorithm.Algorithm.OLogN.getKey());
         }
@@ -53,7 +55,7 @@ public class StrategyArmoryDispatch extends AbstractStrategyAlgorithm {
         String beanName = repository.queryStrategyArmoryAlgorithmFromCache(key);
         if (null == beanName)
             throw new RuntimeException("key " + key + " beanName is null");
-        IAlgorithm algorithm = BeanNameSelector.select(algorithms, beanName);
+        IAlgorithm algorithm = CDIBeanSelector.select(algorithms, beanName);
         return algorithm.dispatchAlgorithm(key);
     }
 

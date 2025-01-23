@@ -1,11 +1,15 @@
 package top.kwseeker.market.domain.strategy;
 
+import com.alibaba.fastjson2.JSON;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import top.kwseeker.market.domain.strategy.model.entity.RaffleAwardEntity;
+import top.kwseeker.market.domain.strategy.model.entity.RaffleFactorEntity;
+import top.kwseeker.market.domain.strategy.service.IRaffleStrategy;
 import top.kwseeker.market.domain.strategy.service.armory.IStrategyArmory;
 
 import java.util.List;
@@ -24,8 +28,8 @@ public class RaffleStrategyTest {
      */
     @Inject
     IStrategyArmory strategyArmory;
-    //@Resource
-    //private IRaffleStrategy raffleStrategy;
+    @Inject
+    IRaffleStrategy raffleStrategy;
     //@Resource
     //private RuleWeightLogicChain ruleWeightLogicChain;
     //@Resource
@@ -40,35 +44,25 @@ public class RaffleStrategyTest {
         // 策略装配 100001、100002、100003
         log.info("测试结果：{}", strategyArmory.assembleLotteryStrategy(100001L));
         log.info("测试结果：{}", strategyArmory.assembleLotteryStrategy(100006L));
-
-        // 通过反射 mock 规则中的值；到本节不需要在使用了。
-        /*ReflectionTestUtils.setField(ruleWeightLogicChain, "userScore", 4900L);*/
-        /*ReflectionTestUtils.setField(ruleLockLogicTreeNode, "userRaffleCount", 10L);*/
     }
 
     @Test
-    public void test() {
+    public void test_performRaffle() throws InterruptedException {
+        for (int i = 0; i < 1; i++) {
+            RaffleFactorEntity raffleFactorEntity = RaffleFactorEntity.builder()
+                    .userId("Arvin")
+                    .strategyId(100006L)
+                    .build();
+            RaffleAwardEntity raffleAwardEntity = raffleStrategy.performRaffle(raffleFactorEntity);
 
+            log.info("请求参数：{}", JSON.toJSONString(raffleFactorEntity));
+            log.info("测试结果：{}", JSON.toJSONString(raffleAwardEntity));
+        }
+
+        // 等待 UpdateAwardStockJob 消费队列
+        new CountDownLatch(1).await();
     }
 
-    //@Test
-    //public void test_performRaffle() throws InterruptedException {
-    //    for (int i = 0; i < 1; i++) {
-    //        RaffleFactorEntity raffleFactorEntity = RaffleFactorEntity.builder()
-    //                .userId("xiaofuge")
-    //                .strategyId(100006L)
-    //                .build();
-    //
-    //        RaffleAwardEntity raffleAwardEntity = raffleStrategy.performRaffle(raffleFactorEntity);
-    //
-    //        log.info("请求参数：{}", JSON.toJSONString(raffleFactorEntity));
-    //        log.info("测试结果：{}", JSON.toJSONString(raffleAwardEntity));
-    //    }
-    //
-    //    // 等待 UpdateAwardStockJob 消费队列
-    //    new CountDownLatch(1).await();
-    //}
-    //
     //@Test
     //public void test_performRaffle_blacklist() {
     //    RaffleFactorEntity raffleFactorEntity = RaffleFactorEntity.builder()

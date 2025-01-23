@@ -1,5 +1,10 @@
 package top.kwseeker.market.infrastructure.dao.po;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Date;
 
 /**
@@ -7,6 +12,10 @@ import java.util.Date;
  * @description 抽奖活动账户表 持久化对象
  * @create 2024-03-02 13:15
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class RaffleActivityAccount {
 
     /**
@@ -64,109 +73,4 @@ public class RaffleActivityAccount {
      */
     private Date updateTime;
 
-
-    public RaffleActivityAccount() {
-    }
-
-    public RaffleActivityAccount(Long id, String userId, Long activityId, Integer totalCount, Integer totalCountSurplus, Integer dayCount, Integer dayCountSurplus, Integer monthCount, Integer monthCountSurplus, Date createTime, Date updateTime) {
-        this.id = id;
-        this.userId = userId;
-        this.activityId = activityId;
-        this.totalCount = totalCount;
-        this.totalCountSurplus = totalCountSurplus;
-        this.dayCount = dayCount;
-        this.dayCountSurplus = dayCountSurplus;
-        this.monthCount = monthCount;
-        this.monthCountSurplus = monthCountSurplus;
-        this.createTime = createTime;
-        this.updateTime = updateTime;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public Long getActivityId() {
-        return activityId;
-    }
-
-    public void setActivityId(Long activityId) {
-        this.activityId = activityId;
-    }
-
-    public Integer getTotalCount() {
-        return totalCount;
-    }
-
-    public void setTotalCount(Integer totalCount) {
-        this.totalCount = totalCount;
-    }
-
-    public Integer getTotalCountSurplus() {
-        return totalCountSurplus;
-    }
-
-    public void setTotalCountSurplus(Integer totalCountSurplus) {
-        this.totalCountSurplus = totalCountSurplus;
-    }
-
-    public Integer getDayCount() {
-        return dayCount;
-    }
-
-    public void setDayCount(Integer dayCount) {
-        this.dayCount = dayCount;
-    }
-
-    public Integer getDayCountSurplus() {
-        return dayCountSurplus;
-    }
-
-    public void setDayCountSurplus(Integer dayCountSurplus) {
-        this.dayCountSurplus = dayCountSurplus;
-    }
-
-    public Integer getMonthCount() {
-        return monthCount;
-    }
-
-    public void setMonthCount(Integer monthCount) {
-        this.monthCount = monthCount;
-    }
-
-    public Integer getMonthCountSurplus() {
-        return monthCountSurplus;
-    }
-
-    public void setMonthCountSurplus(Integer monthCountSurplus) {
-        this.monthCountSurplus = monthCountSurplus;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
 }

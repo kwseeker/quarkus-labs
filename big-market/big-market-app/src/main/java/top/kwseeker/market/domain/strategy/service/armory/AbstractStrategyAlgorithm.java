@@ -1,15 +1,23 @@
 package top.kwseeker.market.domain.strategy.service.armory;
 
 import jakarta.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import top.kwseeker.market.domain.strategy.model.entity.StrategyAwardEntity;
+import top.kwseeker.market.domain.strategy.model.entity.StrategyEntity;
+import top.kwseeker.market.domain.strategy.model.entity.StrategyRuleEntity;
 import top.kwseeker.market.domain.strategy.repository.IStrategyRepository;
 import top.kwseeker.market.types.common.Constants;
+import top.kwseeker.market.types.enums.ResponseCode;
+import top.kwseeker.market.types.exception.AppException;
 
 import java.math.BigDecimal;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+@Slf4j
 public abstract class AbstractStrategyAlgorithm implements IStrategyArmory, IStrategyDispatch {
 
     @Inject
@@ -29,9 +37,10 @@ public abstract class AbstractStrategyAlgorithm implements IStrategyArmory, IStr
      */
     @Override
     public boolean assembleLotteryStrategy(Long strategyId) {
+        log.debug("开始抽奖策略装配：strategyId={}", strategyId);
+
         // 1. 查询策略配置
         List<StrategyAwardEntity> strategyAwardEntities = repository.queryStrategyAwardList(strategyId);
-
          //2. 缓存奖品库存【用于decr扣减库存使用】
         for (StrategyAwardEntity strategyAward : strategyAwardEntities) {
             Integer awardId = strategyAward.getAwardId();
@@ -42,30 +51,33 @@ public abstract class AbstractStrategyAlgorithm implements IStrategyArmory, IStr
         // 3.1 默认装配配置【全量抽奖概率】
         armoryAlgorithm(String.valueOf(strategyId), strategyAwardEntities);
 
-        //// 3.2 权重策略配置 - 适用于 rule_weight 权重规则配置【4000:102,103,104,105 5000:102,103,104,105,106,107 6000:102,103,104,105,106,107,108,109】
-        //StrategyEntity strategyEntity = repository.queryStrategyEntityByStrategyId(strategyId);
-        //String ruleWeight = strategyEntity.getRuleWeight();
-        //if (null == ruleWeight) return true;
-        //
-        //StrategyRuleEntity strategyRuleEntity = repository.queryStrategyRule(strategyId, ruleWeight);
-        //// 业务异常，策略规则中 rule_weight 权重规则已适用但未配置
-        //if (null == strategyRuleEntity) {
-        //    throw new AppException(ResponseCode.STRATEGY_RULE_WEIGHT_IS_NULL.getCode(), ResponseCode.STRATEGY_RULE_WEIGHT_IS_NULL.getInfo());
-        //}
-        //
-        //Map<String, List<Integer>> ruleWeightValueMap = strategyRuleEntity.getRuleWeightValues();
-        //for (String key : ruleWeightValueMap.keySet()) {
-        //    List<Integer> ruleWeightValues = ruleWeightValueMap.get(key);
-        //    ArrayList<StrategyAwardEntity> strategyAwardEntitiesClone = new ArrayList<>(strategyAwardEntities);
-        //    strategyAwardEntitiesClone.removeIf(entity -> !ruleWeightValues.contains(entity.getAwardId()));
-        //    armoryAlgorithm(String.valueOf(strategyId).concat(Constants.UNDERLINE).concat(key), strategyAwardEntitiesClone);
-        //}
+        // 3.2 权重策略配置 - 适用于 rule_weight 权重规则配置【4000:102,103,104,105 5000:102,103,104,105,106,107 6000:102,103,104,105,106,107,108,109】
+        StrategyEntity strategyEntity = repository.queryStrategyEntityByStrategyId(strategyId);
+        String ruleWeight = strategyEntity.getRuleWeight();
+        if (null == ruleWeight)
+            return true;
 
+        StrategyRuleEntity strategyRuleEntity = repository.queryStrategyRule(strategyId, ruleWeight);
+        // 业务异常，策略规则中 rule_weight 权重规则已适用但未配置
+        if (null == strategyRuleEntity) {
+            throw new AppException(ResponseCode.STRATEGY_RULE_WEIGHT_IS_NULL.getCode(), ResponseCode.STRATEGY_RULE_WEIGHT_IS_NULL.getInfo());
+        }
+
+        Map<String, List<Integer>> ruleWeightValueMap = strategyRuleEntity.getRuleWeightValues();
+        for (String key : ruleWeightValueMap.keySet()) {
+            List<Integer> ruleWeightValues = ruleWeightValueMap.get(key);
+            ArrayList<StrategyAwardEntity> strategyAwardEntitiesClone = new ArrayList<>(strategyAwardEntities);
+            strategyAwardEntitiesClone.removeIf(entity -> !ruleWeightValues.contains(entity.getAwardId()));
+            // 只是会额外装配一份算法实例，算法不变
+            armoryAlgorithm(String.valueOf(strategyId).concat(Constants.UNDERLINE).concat(key), strategyAwardEntitiesClone);
+        }
+
+        log.debug("结束抽奖策略装配：strategyId={}", strategyId);
         return true;
     }
 
     /**
-     * 装配算法
+     * 装配算法, 为每个策略、权重都装配一个策略实例
      * @param key 为策略ID、权重ID
      * @param strategyAwardEntities 对应的奖品概率
      */
@@ -94,6 +106,9 @@ public abstract class AbstractStrategyAlgorithm implements IStrategyArmory, IStr
         return getRandomAwardId(key);
     }
 
+    /**
+     * @param key strategyId || strategyId_ruleWeightValue；
+     */
     @Override
     public Integer getRandomAwardId(String key) {
         return dispatchAlgorithm(key);
