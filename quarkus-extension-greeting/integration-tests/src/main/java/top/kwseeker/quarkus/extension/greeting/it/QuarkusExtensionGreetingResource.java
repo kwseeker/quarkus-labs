@@ -17,7 +17,6 @@
 package top.kwseeker.quarkus.extension.greeting.it;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 
 @Path("/quarkus-extension-greeting")
@@ -25,8 +24,8 @@ import jakarta.ws.rs.Path;
 public class QuarkusExtensionGreetingResource {
     // add some rest methods here
 
-    @GET
-    public String hello() {
-        return "Hello quarkus-extension-greeting";
-    }
+    //@GET
+    //public String hello() {
+    //    return "Hello quarkus-extension-greeting";
+    //}
 }

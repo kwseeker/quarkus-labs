@@ -13,9 +13,9 @@ public class QuarkusExtensionGreetingResourceTest {
     @Test
     public void testHelloEndpoint() {
         given()
-                .when().get("/quarkus-extension-greeting")
+                .when().get("/greeting")
                 .then()
                 .statusCode(200)
-                .body(is("Hello quarkus-extension-greeting"));
+                .body(is("Hello"));
     }
 }

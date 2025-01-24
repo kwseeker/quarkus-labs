@@ -11,10 +11,15 @@
     <name>Quarkus Extension Greeting - Deployment</name>
 
     <dependencies>
+        <!--<dependency>-->
+        <!--    <groupId>io.quarkus</groupId>-->
+        <!--    <artifactId>quarkus-arc-deployment</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-arc-deployment</artifactId>
+            <artifactId>quarkus-undertow-deployment</artifactId>
         </dependency>
+        <!-- deployment 依赖 runtime -->
         <dependency>
             <groupId>top.kwseeker</groupId>
             <artifactId>quarkus-extension-greeting</artifactId>
@@ -23,6 +28,11 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5-internal</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
