@@ -17,6 +17,7 @@
         <module>quarkus-013-hello-lifecycle</module>
         <module>quarkus-033-sample-redisson</module>
         <module>quarkus-extension-greeting</module>
+        <module>quarkus-extension-redisson</module>
         <module>vertx-web-010-hello</module>
     </modules>
 
