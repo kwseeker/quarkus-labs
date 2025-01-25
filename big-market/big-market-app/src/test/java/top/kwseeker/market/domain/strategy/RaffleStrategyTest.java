@@ -60,7 +60,7 @@ public class RaffleStrategyTest {
         }
 
         // 等待 UpdateAwardStockJob 消费队列
-        new CountDownLatch(1).await();
+        //new CountDownLatch(1).await();
     }
 
     //@Test
