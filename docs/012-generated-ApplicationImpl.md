@@ -2,10 +2,12 @@
 
 通过 ClassLoader 读取生成的 ApplicationImpl.class 内容：
 
-```
+```java
 Files.write(Path.of("/tmp/" + "ApplicationImpl" +".class"),getClass().getClassLoader()
 .getResourceAsStream(getClass().getName().replace(".","/")+".class").readAllBytes())
 ```
+
+其实官方的 maven 插件提供了生成字节码的 goal，不需要使用这种方式了。
 
 生成的 ApplicationImpl.class 内容：
 

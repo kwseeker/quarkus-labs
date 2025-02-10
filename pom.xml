@@ -12,6 +12,7 @@
     <modules>
         <module>big-market</module>
         <module>quarkus-010-hello</module>
+        <module>quarkus-010-smallest-system</module>
         <module>quarkus-011-hello-cdi</module>
         <module>quarkus-011-hello-cdi-provider</module>
         <module>quarkus-013-hello-lifecycle</module>
