@@ -1,4 +1,38 @@
-###
-#
+### 策略装配并缓存接口
+GET {{baseUrl}}/api/{{apiVer}}/raffle/strategy/strategy_armory?strategyId=100001e
 
+### 查询展示给用户的奖品列表接口
+POST {{baseUrl}}/api/{{apiVer}}/raffle/strategy/query_raffle_award_list
+Content-Type: application/json
 
+{
+  "userId": 10001,
+  "activityId": 100301
+}
+
+### 查询展示给用户的奖品列表接口(带Token)
+POST {{baseUrl}}/api/{{apiVer}}/raffle/strategy/query_raffle_award_list_by_token
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "userId": 10001,
+  "activityId": 100301
+}
+
+### 查询策略抽奖权重规则接口
+POST {{baseUrl}}/api/{{apiVer}}/raffle/strategy/query_raffle_strategy_rule_weight
+Content-Type: application/json
+
+{
+  "userId": 10001,
+  "activityId": 100301
+}
+
+### 随机抽奖接口
+POST {{baseUrl}}/api/{{apiVer}}/raffle/strategy/random_raffle
+Content-Type: application/json
+
+{
+  "strategyId": 100006
+}

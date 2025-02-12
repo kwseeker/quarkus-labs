@@ -2,11 +2,13 @@
 
 + **数据结构**
 
-  最重要的就是数据结构的设计。
+  最重要的是数据结构的设计。
 
   ![](imgs/market-er.png)
 
-  其中 `strategy + strategy_rule` 配置了抽奖概率算法和额外规则；`stategy_award + rule_tree + rule_tree_node + rule_tree_node_line + 一些用户参与计数表` 配置了奖品规则（库存规则、兜底奖励、次数锁规则）。
+  其中 `strategy + strategy_rule` 配置了抽奖概率算法和额外抽奖规则（权重规则：消耗一定积分必中奖、黑名单规则：黑名单用户只奖励积分、不满足前两个条件才会执行概率抽奖）；`stategy_award + rule_tree + rule_tree_node + rule_tree_node_line + 一些用户参与计数表` 配置了每一种奖品的规则（比如：库存扣减规则[实物类商品]、兜底奖励[比如积分奖品]、次数锁规则[某些奖品需要达到一定的参与次数才能解锁]）。
+
+  rule_tree 定义了一些商品规则树(rule_tree.tree_node_rule_key是根规则节点)，rule_tree_node_line 记录从根规则节点开始的每一条规则链，即每个奖品可以有多个规则，且规则有顺序。
 
 + **抽奖策略**
 
