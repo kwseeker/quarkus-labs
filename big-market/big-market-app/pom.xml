@@ -31,6 +31,10 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-resteasy-jackson</artifactId>
         </dependency>
+        <!--<dependency>-->
+        <!--    <groupId>io.quarkus</groupId>-->
+        <!--    <artifactId>quarkus-config-yaml</artifactId>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>io.quarkiverse.mybatis</groupId>
@@ -77,6 +81,17 @@
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.15</version>
+        </dependency>
+        <!-- HTTP 客户端库，通过注解来简化 HTTP 请求的构建和处理，使得代码更加简洁和易于维护 -->
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>retrofit</artifactId>
+            <version>2.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>converter-jackson</artifactId>
+            <version>2.9.0</version>
         </dependency>
         <!-- 日志：https://quarkus.pro/guides/logging.html-->
         <dependency>
