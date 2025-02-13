@@ -1,0 +1,84 @@
+### 查询活动ID接口
+GET {{baseUrl}}/api/{{apiVer}}/raffle/activity/query_stage_activity_id?channel=c01&source=s01
+
+### 活动装配接口
+GET {{baseUrl}}/api/{{apiVer}}/raffle/activity/armory?activityId=100401
+
+### 参与活动抽奖接口
+POST {{baseUrl}}/api/{{apiVer}}/raffle/activity/draw
+Content-Type: application/json
+
+{
+  "userId": 10001,
+  "activityId": 100401
+}
+
+### 参与活动抽奖接口（带Token）
+POST {{baseUrl}}/api/{{apiVer}}/raffle/activity/draw_by_token
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "activityId": 100401
+}
+
+### 日历签到返利接口（带Token）
+POST {{baseUrl}}/api/{{apiVer}}/raffle/activity/calendar_sign_rebate_by_token
+Authorization: {{token}}
+
+### 日历签到返利接口
+POST {{baseUrl}}/api/{{apiVer}}/raffle/activity/calendar_sign_rebate?userId=10001
+
+### 判断是否有签到接口（带Token）
+POST {{baseUrl}}/api/{{apiVer}}/raffle/activity/is_calendar_sign_rebate_by_token
+Authorization: {{token}}
+
+### 判断是否有签到接口
+POST {{baseUrl}}/api/{{apiVer}}/raffle/activity/is_calendar_sign_rebate?userId=10001
+
+### 查询账户参与抽奖活动额度接口（带Token）
+POST {{baseUrl}}/api/{{apiVer}}/raffle/activity/query_user_activity_account_by_token
+Authorization: {{token}}
+
+### 查询账户参与抽奖活动额度接口
+POST {{baseUrl}}/api/{{apiVer}}/raffle/activity/query_user_activity_account
+Content-Type: application/json
+
+{
+  "userId": "10001",
+  "activityId": 100401
+}
+
+### 查询sku商品集合接口
+POST {{baseUrl}}/api/{{apiVer}}/raffle/activity/query_sku_product_list_by_activity_id
+Content-Type: application/x-www-form-urlencoded
+
+activityId=100401
+
+### 查询用户积分值接口（带Token）
+POST {{baseUrl}}/api/{{apiVer}}/raffle/activity/query_user_credit_account_by_token
+Authorization: {{token}}
+
+### 查询用户积分值接口
+POST {{baseUrl}}/api/{{apiVer}}/raffle/activity/query_user_credit_account
+Content-Type: application/x-www-form-urlencoded
+
+userId=10001
+
+### 积分兑换商品接口（带Token）
+POST {{baseUrl}}/api/{{apiVer}}/raffle/activity/credit_pay_exchange_sku_by_token
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "sku": 9901
+}
+
+### 积分兑换商品接口
+POST {{baseUrl}}/api/{{apiVer}}/raffle/activity/credit_pay_exchange_sku
+Content-Type: application/json
+
+{
+  "userId": 10001,
+  "sku": 9901
+}

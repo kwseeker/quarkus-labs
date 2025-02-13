@@ -333,7 +333,7 @@ public class RaffleActivitySource implements IRaffleActivityService {
 
     /**
      * 日历签到返利接口
-     *
+     * 每人每天只能签到一次
      * @param userId 用户ID
      * @return 签到返利结果
      * <p>

@@ -1,6 +1,7 @@
 package top.kwseeker.market.domain.activity.service.partake;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import top.kwseeker.market.domain.activity.adapter.repository.IActivityRepository;
 import top.kwseeker.market.domain.activity.model.aggregate.CreatePartakeOrderAggregate;
 import top.kwseeker.market.domain.activity.model.entity.*;
@@ -26,6 +27,7 @@ public class RaffleActivityPartakeService extends AbstractRaffleActivityPartake{
     public RaffleActivityPartakeService() {
     }
 
+    @Inject
     public RaffleActivityPartakeService(IActivityRepository activityRepository) {
         super(activityRepository);
     }
@@ -43,7 +45,7 @@ public class RaffleActivityPartakeService extends AbstractRaffleActivityPartake{
         String month = dateFormatMonth.format(currentDate);
         String day = dateFormatDay.format(currentDate);
 
-        // 查询月账户额度
+        // 查询月账户额度 TODO 用户初始额度怎么设置的
         ActivityAccountMonthEntity activityAccountMonthEntity = activityRepository.queryActivityAccountMonthByUserId(userId, activityId, month);
         if (null != activityAccountMonthEntity && activityAccountMonthEntity.getMonthCountSurplus() <= 0) {
             throw new AppException(ResponseCode.ACCOUNT_MONTH_QUOTA_ERROR.getCode(), ResponseCode.ACCOUNT_MONTH_QUOTA_ERROR.getInfo());

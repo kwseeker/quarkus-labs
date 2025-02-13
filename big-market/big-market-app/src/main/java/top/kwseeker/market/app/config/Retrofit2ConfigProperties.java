@@ -2,7 +2,6 @@ package top.kwseeker.market.app.config;
 
 import io.quarkus.runtime.annotations.StaticInitSafe;
 import io.smallrye.config.ConfigMapping;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  * <a href="https://cn.quarkus.io/guides/config-mappings">Quarkus将配置映射到对象</a>
@@ -16,7 +15,7 @@ public interface Retrofit2ConfigProperties {
     /** 转发地址 */
     String apiHost();
 
-    /** 大营销接口调用配置，注意嵌套配置必须提供此返回内部配置接口实例的方法 */
+    /** 大营销接口调用配置，注意 Quarkus 嵌套配置必须提供此返回内部配置接口实例的方法 */
     BigMarket bigMarket();
 
     interface BigMarket {
