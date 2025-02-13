@@ -17,6 +17,7 @@
         <module>quarkus-011-hello-cdi-provider</module>
         <module>quarkus-013-hello-lifecycle</module>
         <module>quarkus-033-sample-redisson</module>
+        <module>quarkus-130-rest-exception-mapper</module>
         <module>quarkus-extension-greeting</module>
         <module>quarkus-extension-redisson</module>
         <module>vertx-web-010-hello</module>
