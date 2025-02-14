@@ -2,6 +2,8 @@ package top.kwseeker.market.infrastructure.adapter.repository;
 
 import jakarta.inject.Inject;
 //import top.kwseeker.market.domain.activity.adapter.event.ActivitySkuStockZeroMessageEvent;
+import jakarta.transaction.*;
+import org.apache.ibatis.exceptions.PersistenceException;
 import top.kwseeker.market.domain.activity.model.aggregate.CreatePartakeOrderAggregate;
 import top.kwseeker.market.domain.activity.model.aggregate.CreateQuotaOrderAggregate;
 import top.kwseeker.market.domain.activity.model.entity.*;
@@ -65,9 +67,11 @@ public class ActivityRepository implements IActivityRepository {
     IUserRaffleOrderDao userRaffleOrderDao;
     @Inject
     IRaffleActivityStageDao raffleActivityStageDao;
-    //TODO Quarkus 集成事务、分库分表、MQ
-    //@Inject
+    //Quarkus 事务管理器是 quarkus-narayana-jta 中定义的，
     //TransactionTemplate transactionTemplate;
+    @Inject
+    TransactionManager transactionManager;
+    //TODO Quarkus 分库分表、MQ
     //@Inject
     //IDBRouterStrategy dbRouter;
     //@Inject
@@ -188,28 +192,41 @@ public class ActivityRepository implements IActivityRepository {
             //dbRouter.doRouter(createOrderAggregate.getUserId());
             // 编程式事务
             //transactionTemplate.execute(status -> {
-                try {
-                    // 1. 写入订单
-                    raffleActivityOrderDao.insert(raffleActivityOrder);
-                    // 2. 更新账户 - 总
-                    RaffleActivityAccount raffleActivityAccountRes = raffleActivityAccountDao.queryAccountByUserId(raffleActivityAccount);
-                    if (null == raffleActivityAccountRes) {
-                        raffleActivityAccountDao.insert(raffleActivityAccount);
-                    } else {
-                        raffleActivityAccountDao.updateAccountQuota(raffleActivityAccount);
-                    }
-                    // 4. 更新账户 - 月
-                    raffleActivityAccountMonthDao.addAccountQuota(raffleActivityAccountMonth);
-                    // 5. 更新账户 - 日
-                    raffleActivityAccountDayDao.addAccountQuota(raffleActivityAccountDay);
-                    //return 1;
-                //} catch (DuplicateKeyException e) {
-                //} catch (SQLIntegrityConstraintViolationException e) {    //TODO Quarkus Mybatis 唯一索引冲突会抛什么异常
-                } catch (Exception e) {
-                    //status.setRollbackOnly();
-                    log.error("写入订单记录，唯一索引冲突 userId: {} activityId: {} sku: {}", activityOrderEntity.getUserId(), activityOrderEntity.getActivityId(), activityOrderEntity.getSku(), e);
-                    throw new AppException(ResponseCode.INDEX_DUP.getCode(), e);
+            try {
+                transactionManager.begin();
+                // 1. 写入订单
+                raffleActivityOrderDao.insert(raffleActivityOrder);
+                // 2. 更新账户 - 总
+                RaffleActivityAccount raffleActivityAccountRes = raffleActivityAccountDao.queryAccountByUserId(raffleActivityAccount);
+                if (null == raffleActivityAccountRes) {
+                    raffleActivityAccountDao.insert(raffleActivityAccount);
+                } else {
+                    raffleActivityAccountDao.updateAccountQuota(raffleActivityAccount);
                 }
+                // 4. 更新账户 - 月
+                raffleActivityAccountMonthDao.addAccountQuota(raffleActivityAccountMonth);
+                // 5. 更新账户 - 日
+                raffleActivityAccountDayDao.addAccountQuota(raffleActivityAccountDay);
+                transactionManager.commit();
+                //return 1;
+                //} catch (DuplicateKeyException e) {
+            } catch (Exception e) {
+                //status.setRollbackOnly();
+                ResponseCode code = ResponseCode.SYSTEM_ERROR;
+                try {
+                    if (e instanceof PersistenceException
+                            && e.getCause() instanceof SQLIntegrityConstraintViolationException) {
+                        log.error("写入订单记录，唯一索引冲突 userId: {} activityId: {} sku: {}", activityOrderEntity.getUserId(), activityOrderEntity.getActivityId(), activityOrderEntity.getSku(), e);
+                        code = ResponseCode.INDEX_DUP;
+                    } else {
+                        log.error("写入订单记录，出现异常 userId: {} activityId: {} sku: {}", activityOrderEntity.getUserId(), activityOrderEntity.getActivityId(), activityOrderEntity.getSku(), e);
+                    }
+                    transactionManager.rollback();
+                } catch (SystemException ex) {
+                    log.error("回滚失败 ", ex);
+                }
+                throw new AppException(code.getCode(), e);
+            }
             //});
         } finally {
             //dbRouter.clear();
@@ -441,6 +458,7 @@ public class ActivityRepository implements IActivityRepository {
             //dbRouter.doRouter(userId);
             //transactionTemplate.execute(status -> {
                 try {
+                    transactionManager.begin();
                     // 1. 更新总账户
                     int totalCount = raffleActivityAccountDao.updateActivityAccountSubtractionQuota(
                             RaffleActivityAccount.builder()
@@ -534,13 +552,25 @@ public class ActivityRepository implements IActivityRepository {
                             .orderTime(userRaffleOrderEntity.getOrderTime())
                             .orderState(userRaffleOrderEntity.getOrderState().getCode())
                             .build());
-
+                    transactionManager.commit();
                     //return 1;
                 //} catch (DuplicateKeyException e) {
                 } catch (Exception e) {
                     //status.setRollbackOnly();
-                    log.error("写入创建参与活动记录，唯一索引冲突 userId: {} activityId: {}", userId, activityId, e);
-                    throw new AppException(ResponseCode.INDEX_DUP.getCode(), e);
+                    ResponseCode code = ResponseCode.SYSTEM_ERROR;
+                    try {
+                        if (e instanceof PersistenceException
+                                && e.getCause() instanceof SQLIntegrityConstraintViolationException) {
+                            log.error("写入创建参与活动记录，唯一索引冲突 userId: {} activityId: {}", userId, activityId, e);
+                            code = ResponseCode.INDEX_DUP;
+                        } else {
+                            log.error("写入创建参与活动记录，出现异常 userId: {} activityId: {}", userId, activityId, e);
+                        }
+                        transactionManager.rollback();
+                    } catch (SystemException ex) {
+                        log.error("回滚失败 ", ex);
+                    }
+                    throw new AppException(code.getCode(), e);
                 }
             //});
         //} finally {
@@ -695,6 +725,7 @@ public class ActivityRepository implements IActivityRepository {
             // 编程式事务
             //transactionTemplate.execute(status -> {
                 try {
+                    transactionManager.begin();
                     // 1. 更新订单
                     int updateCount = raffleActivityOrderDao.updateOrderCompleted(raffleActivityOrderReq);
                     if (1 != updateCount) {
@@ -713,11 +744,24 @@ public class ActivityRepository implements IActivityRepository {
                     // 5. 更新账户 - 日
                     raffleActivityAccountDayDao.addAccountQuota(raffleActivityAccountDay);
                     //return 1;
+                    transactionManager.commit();
                 //} catch (DuplicateKeyException e) {
                 } catch (Exception e) {
                     //status.setRollbackOnly();
-                    log.error("更新订单记录，完成态，唯一索引冲突 userId: {} outBusinessNo: {}", deliveryOrderEntity.getUserId(), deliveryOrderEntity.getOutBusinessNo(), e);
-                    throw new AppException(ResponseCode.INDEX_DUP.getCode(), e);
+                    ResponseCode code = ResponseCode.SYSTEM_ERROR;
+                    try {
+                        if (e instanceof PersistenceException
+                                && e.getCause() instanceof SQLIntegrityConstraintViolationException) {
+                            log.error("更新订单记录，完成态，唯一索引冲突 userId: {} outBusinessNo: {}", deliveryOrderEntity.getUserId(), deliveryOrderEntity.getOutBusinessNo(), e);
+                            code = ResponseCode.INDEX_DUP;
+                        } else {
+                            log.error("更新订单记录，完成态，出现异常 userId: {} outBusinessNo: {}", deliveryOrderEntity.getUserId(), deliveryOrderEntity.getOutBusinessNo(), e);
+                        }
+                        transactionManager.rollback();
+                    } catch (SystemException ex) {
+                        log.error("回滚失败 ", ex);
+                    }
+                    throw new AppException(code.getCode(), e);
                 }
             //});
         } finally {

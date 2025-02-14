@@ -2,6 +2,7 @@ package top.kwseeker.market.infrastructure.adapter.repository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.apache.ibatis.exceptions.PersistenceException;
 import top.kwseeker.market.domain.rebate.model.aggregate.BehaviorRebateAggregate;
 import top.kwseeker.market.domain.rebate.model.entity.BehaviorRebateOrderEntity;
 import top.kwseeker.market.domain.rebate.model.entity.TaskEntity;
@@ -16,11 +17,13 @@ import top.kwseeker.market.infrastructure.dao.po.Task;
 import top.kwseeker.market.infrastructure.dao.po.UserBehaviorRebateOrder;
 //import top.kwseeker.market.infrastructure.event.EventPublisher;
 //import top.kwseeker.market.middleware.db.router.strategy.IDBRouterStrategy;
+import top.kwseeker.market.infrastructure.quarkus.TransactionTemplate;
 import top.kwseeker.market.types.enums.ResponseCode;
 import top.kwseeker.market.types.exception.AppException;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,10 +42,10 @@ public class BehaviorRebateRepository implements IBehaviorRebateRepository {
     IUserBehaviorRebateOrderDao userBehaviorRebateOrderDao;
     @Inject
     ITaskDao taskDao;
+    @Inject
+    TransactionTemplate transactionTemplate;
     //@Inject       //TODO
     //IDBRouterStrategy dbRouter;
-    //@Inject
-    //TransactionTemplate transactionTemplate;
     //@Inject
     //EventPublisher eventPublisher;
 
@@ -67,6 +70,7 @@ public class BehaviorRebateRepository implements IBehaviorRebateRepository {
         try {
             //dbRouter.doRouter(userId);
             //transactionTemplate.execute(status -> {
+            transactionTemplate.execute(() -> {
                 try {
                     for (BehaviorRebateAggregate behaviorRebateAggregate : behaviorRebateAggregates) {
                         BehaviorRebateOrderEntity behaviorRebateOrderEntity = behaviorRebateAggregate.getBehaviorRebateOrderEntity();
@@ -96,10 +100,15 @@ public class BehaviorRebateRepository implements IBehaviorRebateRepository {
                 //} catch (DuplicateKeyException e) {
                 } catch (Exception e) {
                     //status.setRollbackOnly();
-                    log.error("写入返利记录，唯一索引冲突 userId: {}", userId, e);
+                    if (e instanceof PersistenceException
+                            && e.getCause() instanceof SQLIntegrityConstraintViolationException) {
+                        log.error("写入返利记录，唯一索引冲突 userId: {}", userId, e);
+                    } else {
+                        log.error("写入返利记录，出现异常 userId: {}", userId, e);
+                    }
                     throw new AppException(ResponseCode.INDEX_DUP.getCode(), ResponseCode.INDEX_DUP.getInfo());
                 }
-            //});
+            });
         } finally {
             //dbRouter.clear();
         }

@@ -2,6 +2,7 @@ package top.kwseeker.market.infrastructure.adapter.repository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.apache.ibatis.exceptions.PersistenceException;
 import top.kwseeker.market.domain.award.model.valobj.AccountStatusVO;
 import top.kwseeker.market.domain.credit.model.aggregate.TradeAggregate;
 import top.kwseeker.market.domain.credit.model.entity.CreditAccountEntity;
@@ -15,6 +16,7 @@ import top.kwseeker.market.infrastructure.dao.po.Task;
 import top.kwseeker.market.infrastructure.dao.po.UserCreditAccount;
 import top.kwseeker.market.infrastructure.dao.po.UserCreditOrder;
 //import top.kwseeker.market.infrastructure.event.EventPublisher;
+import top.kwseeker.market.infrastructure.quarkus.TransactionTemplate;
 import top.kwseeker.market.infrastructure.redis.IRedisService;
 //import top.kwseeker.market.middleware.db.router.strategy.IDBRouterStrategy;
 import top.kwseeker.market.types.common.Constants;
@@ -25,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 
 import java.math.BigDecimal;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -44,10 +47,10 @@ public class CreditRepository implements ICreditRepository {
     IUserCreditOrderDao userCreditOrderDao;
     @Inject
     ITaskDao taskDao;
+    @Inject
+    TransactionTemplate transactionTemplate;
     //@Inject   //TODO
     //IDBRouterStrategy dbRouter;
-    //@Inject
-    //TransactionTemplate transactionTemplate;
     //@Inject
     //EventPublisher eventPublisher;
 
@@ -88,6 +91,7 @@ public class CreditRepository implements ICreditRepository {
             //dbRouter.doRouter(userId);
             // 编程式事务
             //transactionTemplate.execute(status -> {
+            transactionTemplate.execute(() -> {
                 try {
                     // 1. 保存账户积分
                     UserCreditAccount userCreditAccount = userCreditAccountDao.queryUserCreditAccount(userCreditAccountReq);
@@ -110,14 +114,17 @@ public class CreditRepository implements ICreditRepository {
                     // 3. 写入任务
                     taskDao.insert(task);
                 //} catch (DuplicateKeyException e) {
-                //    status.setRollbackOnly();
-                //    log.error("调整账户积分额度异常，唯一索引冲突 userId:{} orderId:{}", userId, creditOrderEntity.getOrderId(), e);
                 } catch (Exception e) {
-                    //status.setRollbackOnly();
-                    log.error("调整账户积分额度失败 userId:{} orderId:{}", userId, creditOrderEntity.getOrderId(), e);
+                    if (e instanceof PersistenceException &&
+                            e.getCause() instanceof SQLIntegrityConstraintViolationException) {
+                        log.error("调整账户积分额度异常，唯一索引冲突 userId:{} orderId:{}", userId, creditOrderEntity.getOrderId(), e);
+                    } else {
+                        log.error("调整账户积分额度失败 userId:{} orderId:{}", userId, creditOrderEntity.getOrderId(), e);
+                    }
+                    throw e;
                 }
                 //return 1;
-            //});
+            });
         } finally {
             //dbRouter.clear();
             if (lock.isLocked() && lock.isHeldByCurrentThread()) {

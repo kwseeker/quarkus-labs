@@ -1,19 +1,14 @@
 package top.kwseeker.market.infrastructure.quarkus;
 
 import jakarta.enterprise.context.spi.CreationalContext;
-import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.literal.NamedLiteral;
-import jakarta.enterprise.inject.spi.Bean;
-import jakarta.enterprise.inject.spi.BeanAttributes;
 import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.CDI;
-import jakarta.enterprise.util.AnnotationLiteral;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j

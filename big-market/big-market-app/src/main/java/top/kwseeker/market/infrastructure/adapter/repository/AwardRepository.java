@@ -2,6 +2,9 @@ package top.kwseeker.market.infrastructure.adapter.repository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.TransactionManager;
+import org.apache.ibatis.exceptions.PersistenceException;
 import top.kwseeker.market.domain.award.adapter.repository.IAwardRepository;
 import top.kwseeker.market.domain.award.model.aggregate.GiveOutPrizesAggregate;
 import top.kwseeker.market.domain.award.model.aggregate.UserAwardRecordAggregate;
@@ -15,6 +18,7 @@ import top.kwseeker.market.infrastructure.dao.po.UserAwardRecord;
 import top.kwseeker.market.infrastructure.dao.po.UserCreditAccount;
 import top.kwseeker.market.infrastructure.dao.po.UserRaffleOrder;
 //import top.kwseeker.market.infrastructure.event.EventPublisher;
+import top.kwseeker.market.infrastructure.quarkus.TransactionTemplate;
 import top.kwseeker.market.infrastructure.redis.IRedisService;
 //import top.kwseeker.market.middleware.db.router.strategy.IDBRouterStrategy;
 import top.kwseeker.market.types.common.Constants;
@@ -24,6 +28,7 @@ import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -45,11 +50,11 @@ public class AwardRepository implements IAwardRepository {
     IUserRaffleOrderDao userRaffleOrderDao;
     @Inject
     IUserCreditAccountDao userCreditAccountDao;
+    @Inject
+    TransactionTemplate transactionTemplate;
     // TODO 分库分表、事务控制、消息队列
     //@Inject
     //IDBRouterStrategy dbRouter;
-    //@Inject
-    //TransactionTemplate transactionTemplate;
     //@Inject
     //EventPublisher eventPublisher;
     @Inject
@@ -86,7 +91,7 @@ public class AwardRepository implements IAwardRepository {
 
         try {
             //dbRouter.doRouter(userId);
-            //transactionTemplate.execute(status -> {
+            transactionTemplate.execute(() -> {
                 try {
                     // 写入记录
                     userAwardRecordDao.insert(userAwardRecord);
@@ -102,11 +107,15 @@ public class AwardRepository implements IAwardRepository {
                     //return 1;
                 //} catch (DuplicateKeyException e) {
                 } catch (Exception e) {
-                    //status.setRollbackOnly();
-                    log.error("写入中奖记录，唯一索引冲突 userId: {} activityId: {} awardId: {}", userId, activityId, awardId, e);
-                    throw new AppException(ResponseCode.INDEX_DUP.getCode(), e);
+                    if (e instanceof PersistenceException
+                            && e.getCause() instanceof SQLIntegrityConstraintViolationException) {
+                        log.error("写入中奖记录，唯一索引冲突 userId: {} activityId: {} awardId: {}", userId, activityId, awardId, e);
+                    } else {
+                        log.error("写入中奖记录，出现异常 userId: {} activityId: {} awardId: {}", userId, activityId, awardId, e);
+                    }
+                    throw e;
                 }
-            //});
+            });
         } finally {
             //dbRouter.clear();
         }
@@ -153,6 +162,7 @@ public class AwardRepository implements IAwardRepository {
             lock.lock(3, TimeUnit.SECONDS);
             //dbRouter.doRouter(giveOutPrizesAggregate.getUserId());
             //transactionTemplate.execute(status -> {
+            transactionTemplate.execute(() -> {
                 try {
                     // 更新积分 || 创建积分账户
                     UserCreditAccount userCreditAccountRes = userCreditAccountDao.queryUserCreditAccount(userCreditAccountReq);
@@ -172,10 +182,15 @@ public class AwardRepository implements IAwardRepository {
                 //} catch (DuplicateKeyException e) {
                 } catch (Exception e) {
                     //status.setRollbackOnly();
-                    log.error("更新中奖记录，唯一索引冲突 userId: {} ", userId, e);
-                    throw new AppException(ResponseCode.INDEX_DUP.getCode(), e);
+                    if (e instanceof PersistenceException
+                            && e.getCause() instanceof SQLIntegrityConstraintViolationException) {
+                        log.error("更新中奖记录，唯一索引冲突 userId: {} ", userId, e);
+                    } else {
+                        log.error("更新中奖记录，出现异常 userId: {} ", userId, e);
+                    }
+                    throw e;
                 }
-            //});
+            });
         } finally {
             //dbRouter.clear();
             if (lock.isLocked() && lock.isHeldByCurrentThread()) {
