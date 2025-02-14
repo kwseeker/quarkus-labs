@@ -19,4 +19,11 @@ public class MybatisService {
         bookMapper.createBook(book.getId(), book.getTitle(), author.getId());
         throw new RuntimeException("mock exception");
     }
+
+    public void insertBook2(Book book) {
+        User author = book.getAuthor();
+        userMapper.createUser(author.getId(), author.getName(), author.getExternalId());
+        bookMapper.createBook(book.getId(), book.getTitle(), author.getId());
+        throw new RuntimeException("mock exception");
+    }
 }
