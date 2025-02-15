@@ -18,10 +18,14 @@
         <module>quarkus-013-hello-lifecycle</module>
         <module>quarkus-033-sample-redisson</module>
         <module>quarkus-130-rest-exception-mapper</module>
-        <module>quarkus-131-orm-mybatis</module>
+        <module>quarkus-140-orm-mybatis</module>
+        <module>quarkus-150-mq-rabbitmq</module>
+        <module>quarkus-151-mq-amqp</module>
+        <module>quarkus-152-mq-rabbitmq-reactive</module>
         <module>quarkus-extension-greeting</module>
         <module>quarkus-extension-redisson</module>
         <module>vertx-web-010-hello</module>
+        <module>quarkus-150-mq-rabbitmq</module>
     </modules>
 
 </project>
