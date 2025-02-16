@@ -10,7 +10,6 @@ public interface RabbitChannelConfigProperties {
 
     Exchange exchange();
     Queue queue();
-    Binding binding();
 
     //// 声明一个名为 test 的持久化交换机
     //channel.exchangeDeclare("test", BuiltinExchangeType.TOPIC, true);
@@ -25,13 +24,8 @@ public interface RabbitChannelConfigProperties {
     }
 
     interface Queue {
-        String name();
         Boolean durable();
         Boolean exclusive();
         Boolean autoDelete();
-    }
-
-    interface Binding {
-        String pattern();
     }
 }
