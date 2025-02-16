@@ -16,6 +16,7 @@ import top.kwseeker.market.infrastructure.dao.po.Task;
 import top.kwseeker.market.infrastructure.dao.po.UserCreditAccount;
 import top.kwseeker.market.infrastructure.dao.po.UserCreditOrder;
 //import top.kwseeker.market.infrastructure.event.EventPublisher;
+import top.kwseeker.market.infrastructure.event.EventPublisher;
 import top.kwseeker.market.infrastructure.quarkus.TransactionTemplate;
 import top.kwseeker.market.infrastructure.redis.IRedisService;
 //import top.kwseeker.market.middleware.db.router.strategy.IDBRouterStrategy;
@@ -49,10 +50,10 @@ public class CreditRepository implements ICreditRepository {
     ITaskDao taskDao;
     @Inject
     TransactionTemplate transactionTemplate;
+    @Inject
+    EventPublisher eventPublisher;
     //@Inject   //TODO
     //IDBRouterStrategy dbRouter;
-    //@Inject
-    //EventPublisher eventPublisher;
 
     @Override
     public void saveUserCreditTradeOrder(TradeAggregate tradeAggregate) {
@@ -134,7 +135,7 @@ public class CreditRepository implements ICreditRepository {
 
         try {
             // 发送消息【在事务外执行，如果失败还有任务补偿】
-            //eventPublisher.publish(task.getTopic(), task.getMessage());
+            eventPublisher.publish(task.getTopic(), task.getMessage());
             // 更新数据库记录，task 任务表
             taskDao.updateTaskSendMessageCompleted(task);
             log.info("调整账户积分记录，发送MQ消息完成 userId: {} orderId:{} topic: {}", userId, creditOrderEntity.getOrderId(), task.getTopic());

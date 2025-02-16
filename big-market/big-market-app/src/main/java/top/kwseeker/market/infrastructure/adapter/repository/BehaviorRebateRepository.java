@@ -17,6 +17,7 @@ import top.kwseeker.market.infrastructure.dao.po.Task;
 import top.kwseeker.market.infrastructure.dao.po.UserBehaviorRebateOrder;
 //import top.kwseeker.market.infrastructure.event.EventPublisher;
 //import top.kwseeker.market.middleware.db.router.strategy.IDBRouterStrategy;
+import top.kwseeker.market.infrastructure.event.EventPublisher;
 import top.kwseeker.market.infrastructure.quarkus.TransactionTemplate;
 import top.kwseeker.market.types.enums.ResponseCode;
 import top.kwseeker.market.types.exception.AppException;
@@ -44,10 +45,10 @@ public class BehaviorRebateRepository implements IBehaviorRebateRepository {
     ITaskDao taskDao;
     @Inject
     TransactionTemplate transactionTemplate;
+    @Inject
+    EventPublisher eventPublisher;
     //@Inject       //TODO
     //IDBRouterStrategy dbRouter;
-    //@Inject
-    //EventPublisher eventPublisher;
 
     @Override
     public List<DailyBehaviorRebateVO> queryDailyBehaviorRebateConfig(BehaviorTypeVO behaviorTypeVO) {
@@ -121,7 +122,7 @@ public class BehaviorRebateRepository implements IBehaviorRebateRepository {
             task.setMessageId(taskEntity.getMessageId());
             try {
                 // 发送消息【在事务外执行，如果失败还有任务补偿】
-                //eventPublisher.publish(taskEntity.getTopic(), taskEntity.getMessage());   //TODO
+                eventPublisher.publish(taskEntity.getTopic(), taskEntity.getMessage());
                 // 更新数据库记录，task 任务表
                 taskDao.updateTaskSendMessageCompleted(task);
             } catch (Exception e) {

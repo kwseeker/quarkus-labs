@@ -18,6 +18,7 @@ import top.kwseeker.market.infrastructure.dao.po.UserAwardRecord;
 import top.kwseeker.market.infrastructure.dao.po.UserCreditAccount;
 import top.kwseeker.market.infrastructure.dao.po.UserRaffleOrder;
 //import top.kwseeker.market.infrastructure.event.EventPublisher;
+import top.kwseeker.market.infrastructure.event.EventPublisher;
 import top.kwseeker.market.infrastructure.quarkus.TransactionTemplate;
 import top.kwseeker.market.infrastructure.redis.IRedisService;
 //import top.kwseeker.market.middleware.db.router.strategy.IDBRouterStrategy;
@@ -52,11 +53,11 @@ public class AwardRepository implements IAwardRepository {
     IUserCreditAccountDao userCreditAccountDao;
     @Inject
     TransactionTemplate transactionTemplate;
-    // TODO 分库分表、事务控制、消息队列
+    @Inject
+    EventPublisher eventPublisher;
+    // TODO 分库分表
     //@Inject
     //IDBRouterStrategy dbRouter;
-    //@Inject
-    //EventPublisher eventPublisher;
     @Inject
     IRedisService redisService;
 
@@ -122,7 +123,7 @@ public class AwardRepository implements IAwardRepository {
 
         try {
             // 发送消息【在事务外执行，如果失败还有任务补偿】
-            //eventPublisher.publish(task.getTopic(), task.getMessage());
+            eventPublisher.publish(task.getTopic(), task.getMessage());
             // 更新数据库记录，task 任务表
             taskDao.updateTaskSendMessageCompleted(task);
             log.info("写入中奖记录，发送MQ消息完成 userId: {} orderId:{} topic: {}", userId, userAwardRecordEntity.getOrderId(), task.getTopic());

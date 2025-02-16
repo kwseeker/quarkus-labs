@@ -4,6 +4,7 @@ import jakarta.inject.Inject;
 //import top.kwseeker.market.domain.activity.adapter.event.ActivitySkuStockZeroMessageEvent;
 import jakarta.transaction.*;
 import org.apache.ibatis.exceptions.PersistenceException;
+import top.kwseeker.market.domain.activity.adapter.event.ActivitySkuStockZeroMessageEvent;
 import top.kwseeker.market.domain.activity.model.aggregate.CreatePartakeOrderAggregate;
 import top.kwseeker.market.domain.activity.model.aggregate.CreateQuotaOrderAggregate;
 import top.kwseeker.market.domain.activity.model.entity.*;
@@ -14,6 +15,7 @@ import top.kwseeker.market.domain.activity.adapter.repository.IActivityRepositor
 import top.kwseeker.market.infrastructure.dao.*;
 import top.kwseeker.market.infrastructure.dao.po.*;
 //import top.kwseeker.market.infrastructure.event.EventPublisher;
+import top.kwseeker.market.infrastructure.event.EventPublisher;
 import top.kwseeker.market.infrastructure.redis.IRedisService;
 //import top.kwseeker.market.middleware.db.router.strategy.IDBRouterStrategy;
 import top.kwseeker.market.types.common.Constants;
@@ -26,10 +28,8 @@ import org.redisson.api.RDelayedQueue;
 import org.redisson.api.RLock;
 //import org.springframework.dao.DuplicateKeyException;
 //import org.springframework.stereotype.Repository;
-//import org.springframework.transaction.support.TransactionTemplate;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -71,13 +71,13 @@ public class ActivityRepository implements IActivityRepository {
     //TransactionTemplate transactionTemplate;
     @Inject
     TransactionManager transactionManager;
-    //TODO Quarkus 分库分表、MQ
+    @Inject
+    ActivitySkuStockZeroMessageEvent activitySkuStockZeroMessageEvent;
+    @Inject
+    EventPublisher eventPublisher;
+    //TODO Quarkus 分库分表
     //@Inject
     //IDBRouterStrategy dbRouter;
-    //@Inject
-    //ActivitySkuStockZeroMessageEvent activitySkuStockZeroMessageEvent;
-    //@Inject
-    //EventPublisher eventPublisher;
 
     @Override
     public ActivitySkuEntity queryActivitySku(Long sku) {
@@ -306,7 +306,7 @@ public class ActivityRepository implements IActivityRepository {
 
         if (surplus == 0) {
             // 库存消耗没了以后，发送MQ消息，更新数据库库存
-            //eventPublisher.publish(activitySkuStockZeroMessageEvent.topic(), activitySkuStockZeroMessageEvent.buildEventMessage(sku));
+            eventPublisher.publish(activitySkuStockZeroMessageEvent.topic(), activitySkuStockZeroMessageEvent.buildEventMessage(sku));
         }
 
         return lock;

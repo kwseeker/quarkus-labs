@@ -1,0 +1,1 @@
+参考：https://docs.quarkiverse.io/quarkus-rabbitmq-client/dev/index.html

@@ -50,6 +50,12 @@
             <artifactId>redisson-quarkus-30</artifactId>
             <version>3.26.0</version>
         </dependency>
+        <!-- RabbitMQ https://docs.quarkiverse.io/quarkus-rabbitmq-client/dev/index.html -->
+        <dependency>
+            <groupId>io.quarkiverse.rabbitmqclient</groupId>
+            <artifactId>quarkus-rabbitmq-client</artifactId>
+            <version>3.2.1</version>
+        </dependency>
         <!-- redisson-quarkus 不会自动将 redisson 引入进来 -->
         <dependency>
             <groupId>org.redisson</groupId>
