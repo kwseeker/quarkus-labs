@@ -3,12 +3,12 @@ package top.kwseeker.market.infrastructure.event;
 import com.alibaba.fastjson2.JSON;
 import com.rabbitmq.client.*;
 import io.quarkiverse.rabbitmqclient.RabbitMQClient;
+import io.quarkus.arc.All;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import top.kwseeker.market.types.event.BaseEvent;
 
 import java.io.IOException;
@@ -20,18 +20,20 @@ import java.util.List;
 public class DefaultEventClient {
 
     private final RabbitMQClient rabbitMQClient;
-    private final RabbitChannelConfigProperties channelProperties;
+    private final RabbitChannelConfig channelProperties;
     private final List<QueueConsumer> consumers;
+    private TopicsConfig topicsConfig;
     private Channel channel;
-    @ConfigProperty(name = "app.rabbitmq.topic")
-    List<String> topics;
 
     @Inject
-    public DefaultEventClient(RabbitMQClient rabbitMQClient, RabbitChannelConfigProperties channelProperties,
-                              List<QueueConsumer> consumers) {
+    public DefaultEventClient(RabbitMQClient rabbitMQClient,
+                              RabbitChannelConfig channelProperties,
+                              @All List<QueueConsumer> consumers,
+                              TopicsConfig topicsConfig) {
         this.rabbitMQClient = rabbitMQClient;
         this.channelProperties = channelProperties;
         this.consumers = consumers;
+        this.topicsConfig = topicsConfig;
     }
 
     public void onApplicationStart(@Observes StartupEvent event) {
@@ -46,16 +48,16 @@ public class DefaultEventClient {
             // will close them for you on application shutdown.
             Connection connection = rabbitMQClient.connect();
             channel = connection.createChannel();
-            RabbitChannelConfigProperties.Exchange exchange = channelProperties.exchange();
-            RabbitChannelConfigProperties.Queue queue = channelProperties.queue();
+            RabbitChannelConfig.Exchange exchange = channelProperties.exchange();
+            RabbitChannelConfig.Queue queue = channelProperties.queue();
             // 这里实现一个交换机绑定多个队列（使用主题进行绑定），每一个队列绑定一个消费者
             // 声明一个持久化交换机
             channel.exchangeDeclare(exchange.name(), exchange.type(), exchange.durable());
-            for (String topic : topics) {
+            for (String topic : topicsConfig.getAllTopics()) {
                 // 声明几个持久化、非独占、不自动删除的队列
                 channel.queueDeclare(topic, queue.durable(), queue.exclusive(), queue.autoDelete(), null);
                 // 绑定队列到交换机， 队列接收交换机 pattern 类型消息
-                channel.queueBind(exchange.name(), topic, topic);
+                channel.queueBind(topic, exchange.name(), topic);
             }
         } catch (IOException e) {
             log.error("setup rabbitmq queues failed", e);

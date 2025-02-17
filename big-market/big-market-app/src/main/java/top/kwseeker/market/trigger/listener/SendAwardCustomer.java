@@ -1,21 +1,19 @@
 package top.kwseeker.market.trigger.listener;
 
 import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Envelope;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import top.kwseeker.market.domain.award.adapter.event.SendAwardMessageEvent;
 import top.kwseeker.market.domain.award.model.entity.DistributeAwardEntity;
 import top.kwseeker.market.domain.award.service.IAwardService;
+import top.kwseeker.market.infrastructure.event.AbstractQueueConsumer;
 import top.kwseeker.market.infrastructure.event.DefaultEventClient;
 import top.kwseeker.market.types.event.BaseEvent;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
-import com.rabbitmq.client.DefaultConsumer;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
-import top.kwseeker.market.infrastructure.event.QueueConsumer;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -27,12 +25,15 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 @ApplicationScoped
-public class SendAwardCustomer extends DefaultConsumer implements QueueConsumer {
+public class SendAwardCustomer extends AbstractQueueConsumer {
 
-    @ConfigProperty(name = "spring.rabbitmq.topic.send_award")
+    @ConfigProperty(name = "app.rabbitmq.topic.send_award")
     String topic;
 
-    private final IAwardService awardService;
+    private IAwardService awardService;
+
+    public SendAwardCustomer() {
+    }
 
     @Inject
     public SendAwardCustomer(DefaultEventClient eventClient, IAwardService awardService) {

@@ -8,15 +8,14 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import top.kwseeker.market.domain.activity.model.entity.DeliveryOrderEntity;
 import top.kwseeker.market.domain.activity.service.IRaffleActivityAccountQuotaService;
 import top.kwseeker.market.domain.credit.event.CreditAdjustSuccessMessageEvent;
+import top.kwseeker.market.infrastructure.event.AbstractQueueConsumer;
 import top.kwseeker.market.infrastructure.event.DefaultEventClient;
 import top.kwseeker.market.types.enums.ResponseCode;
 import top.kwseeker.market.types.event.BaseEvent;
 import top.kwseeker.market.types.exception.AppException;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
-import com.rabbitmq.client.DefaultConsumer;
 import lombok.extern.slf4j.Slf4j;
-import top.kwseeker.market.infrastructure.event.QueueConsumer;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,12 +27,15 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 @ApplicationScoped
-public class CreditAdjustSuccessConsumer extends DefaultConsumer implements QueueConsumer {
+public class CreditAdjustSuccessConsumer extends AbstractQueueConsumer {
 
-    @ConfigProperty(name = "spring.rabbitmq.topic.credit_adjust_success")
+    @ConfigProperty(name = "app.rabbitmq.topic.credit_adjust_success")
     String topic;
 
     IRaffleActivityAccountQuotaService raffleActivityAccountQuotaService;
+
+    public CreditAdjustSuccessConsumer() {
+    }
 
     @Inject
     public CreditAdjustSuccessConsumer(DefaultEventClient eventClient,

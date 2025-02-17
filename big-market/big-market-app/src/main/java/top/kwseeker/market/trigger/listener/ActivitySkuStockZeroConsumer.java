@@ -5,8 +5,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import top.kwseeker.market.domain.activity.service.IRaffleActivitySkuStockService;
+import top.kwseeker.market.infrastructure.event.AbstractQueueConsumer;
 import top.kwseeker.market.infrastructure.event.DefaultEventClient;
-import top.kwseeker.market.infrastructure.event.QueueConsumer;
 import top.kwseeker.market.types.event.BaseEvent;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
@@ -22,12 +22,15 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 @ApplicationScoped
-public class ActivitySkuStockZeroConsumer extends DefaultConsumer implements QueueConsumer {
+public class ActivitySkuStockZeroConsumer extends AbstractQueueConsumer {
 
     @ConfigProperty(name = "app.rabbitmq.topic.activity_sku_stock_zero")
     String topic;
 
-    private final IRaffleActivitySkuStockService skuStock;
+    private IRaffleActivitySkuStockService skuStock;
+
+    public ActivitySkuStockZeroConsumer() {
+    }
 
     @Inject
     public ActivitySkuStockZeroConsumer(DefaultEventClient eventClient, IRaffleActivitySkuStockService skuStock) {

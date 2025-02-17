@@ -1,7 +1,6 @@
 package top.kwseeker.market.trigger.listener;
 
 import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -14,8 +13,8 @@ import top.kwseeker.market.domain.credit.model.valobj.TradeNameVO;
 import top.kwseeker.market.domain.credit.model.valobj.TradeTypeVO;
 import top.kwseeker.market.domain.credit.service.ICreditAdjustService;
 import top.kwseeker.market.domain.rebate.event.SendRebateMessageEvent;
+import top.kwseeker.market.infrastructure.event.AbstractQueueConsumer;
 import top.kwseeker.market.infrastructure.event.DefaultEventClient;
-import top.kwseeker.market.infrastructure.event.QueueConsumer;
 import top.kwseeker.market.types.enums.ResponseCode;
 import top.kwseeker.market.types.event.BaseEvent;
 import top.kwseeker.market.types.exception.AppException;
@@ -34,13 +33,16 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 @ApplicationScoped
-public class RebateMessageCustomer extends DefaultConsumer implements QueueConsumer {
+public class RebateMessageCustomer extends AbstractQueueConsumer {
 
-    @ConfigProperty(name = "spring.rabbitmq.topic.send_rebate")
+    @ConfigProperty(name = "app.rabbitmq.topic.send_rebate")
     String topic;
 
-    private final IRaffleActivityAccountQuotaService raffleActivityAccountQuotaService;
-    private final ICreditAdjustService creditAdjustService;
+    private IRaffleActivityAccountQuotaService raffleActivityAccountQuotaService;
+    private ICreditAdjustService creditAdjustService;
+
+    public RebateMessageCustomer() {
+    }
 
     @Inject
     public RebateMessageCustomer(DefaultEventClient eventClient,

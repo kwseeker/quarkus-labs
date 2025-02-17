@@ -6,7 +6,7 @@ import io.smallrye.config.ConfigMapping;
 
 @StaticInitSafe
 @ConfigMapping(prefix = "app.rabbitmq.channel")
-public interface RabbitChannelConfigProperties {
+public interface RabbitChannelConfig {
 
     Exchange exchange();
     Queue queue();
