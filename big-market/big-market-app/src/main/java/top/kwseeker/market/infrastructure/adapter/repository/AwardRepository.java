@@ -2,9 +2,8 @@ package top.kwseeker.market.infrastructure.adapter.repository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.SystemException;
-import jakarta.transaction.TransactionManager;
 import org.apache.ibatis.exceptions.PersistenceException;
+import top.kwseeker.market.app.util.json.JSONUtil;
 import top.kwseeker.market.domain.award.adapter.repository.IAwardRepository;
 import top.kwseeker.market.domain.award.model.aggregate.GiveOutPrizesAggregate;
 import top.kwseeker.market.domain.award.model.aggregate.UserAwardRecordAggregate;
@@ -17,15 +16,12 @@ import top.kwseeker.market.infrastructure.dao.po.Task;
 import top.kwseeker.market.infrastructure.dao.po.UserAwardRecord;
 import top.kwseeker.market.infrastructure.dao.po.UserCreditAccount;
 import top.kwseeker.market.infrastructure.dao.po.UserRaffleOrder;
-//import top.kwseeker.market.infrastructure.event.EventPublisher;
 import top.kwseeker.market.infrastructure.event.EventPublisher;
 import top.kwseeker.market.infrastructure.quarkus.TransactionTemplate;
 import top.kwseeker.market.infrastructure.redis.IRedisService;
-//import top.kwseeker.market.middleware.db.router.strategy.IDBRouterStrategy;
 import top.kwseeker.market.types.common.Constants;
 import top.kwseeker.market.types.enums.ResponseCode;
 import top.kwseeker.market.types.exception.AppException;
-import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 
@@ -83,7 +79,7 @@ public class AwardRepository implements IAwardRepository {
         task.setUserId(taskEntity.getUserId());
         task.setTopic(taskEntity.getTopic());
         task.setMessageId(taskEntity.getMessageId());
-        task.setMessage(JSON.toJSONString(taskEntity.getMessage()));
+        task.setMessage(JSONUtil.toJSONString(taskEntity.getMessage()));
         task.setState(taskEntity.getState().getCode());
 
         UserRaffleOrder userRaffleOrderReq = new UserRaffleOrder();
@@ -176,7 +172,7 @@ public class AwardRepository implements IAwardRepository {
                     // 更新奖品记录
                     int updateAwardCount = userAwardRecordDao.updateAwardRecordCompletedState(userAwardRecordReq);
                     if (0 == updateAwardCount) {
-                        log.warn("更新中奖记录，重复更新拦截 userId:{} giveOutPrizesAggregate:{}", userId, JSON.toJSONString(giveOutPrizesAggregate));
+                        log.warn("更新中奖记录，重复更新拦截 userId:{} giveOutPrizesAggregate:{}", userId, JSONUtil.toJSONString(giveOutPrizesAggregate));
                         //status.setRollbackOnly();
                     }
                     //return 1;

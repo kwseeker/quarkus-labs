@@ -3,6 +3,7 @@ package top.kwseeker.market.infrastructure.adapter.repository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.ibatis.exceptions.PersistenceException;
+import top.kwseeker.market.app.util.json.JSONUtil;
 import top.kwseeker.market.domain.award.model.valobj.AccountStatusVO;
 import top.kwseeker.market.domain.credit.model.aggregate.TradeAggregate;
 import top.kwseeker.market.domain.credit.model.entity.CreditAccountEntity;
@@ -15,15 +16,12 @@ import top.kwseeker.market.infrastructure.dao.IUserCreditOrderDao;
 import top.kwseeker.market.infrastructure.dao.po.Task;
 import top.kwseeker.market.infrastructure.dao.po.UserCreditAccount;
 import top.kwseeker.market.infrastructure.dao.po.UserCreditOrder;
-//import top.kwseeker.market.infrastructure.event.EventPublisher;
 import top.kwseeker.market.infrastructure.event.EventPublisher;
 import top.kwseeker.market.infrastructure.quarkus.TransactionTemplate;
 import top.kwseeker.market.infrastructure.redis.IRedisService;
-//import top.kwseeker.market.middleware.db.router.strategy.IDBRouterStrategy;
 import top.kwseeker.market.types.common.Constants;
 import top.kwseeker.market.types.enums.ResponseCode;
 import top.kwseeker.market.types.exception.AppException;
-import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 
@@ -83,7 +81,7 @@ public class CreditRepository implements ICreditRepository {
         task.setUserId(taskEntity.getUserId());
         task.setTopic(taskEntity.getTopic());
         task.setMessageId(taskEntity.getMessageId());
-        task.setMessage(JSON.toJSONString(taskEntity.getMessage()));
+        task.setMessage(JSONUtil.toJSONString(taskEntity.getMessage()));
         task.setState(taskEntity.getState().getCode());
 
         RLock lock = redisService.getLock(Constants.RedisKey.USER_CREDIT_ACCOUNT_LOCK + userId + Constants.UNDERLINE + creditOrderEntity.getOutBusinessNo());

@@ -1,10 +1,12 @@
 package top.kwseeker.market.trigger.listener;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Envelope;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import top.kwseeker.market.app.util.json.JSONUtil;
 import top.kwseeker.market.domain.activity.model.entity.DeliveryOrderEntity;
 import top.kwseeker.market.domain.activity.service.IRaffleActivityAccountQuotaService;
 import top.kwseeker.market.domain.credit.event.CreditAdjustSuccessMessageEvent;
@@ -13,8 +15,6 @@ import top.kwseeker.market.infrastructure.event.DefaultEventClient;
 import top.kwseeker.market.types.enums.ResponseCode;
 import top.kwseeker.market.types.event.BaseEvent;
 import top.kwseeker.market.types.exception.AppException;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -50,8 +50,8 @@ public class CreditAdjustSuccessConsumer extends AbstractQueueConsumer {
         String message = new String(body, StandardCharsets.UTF_8);
         try {
             log.info("监听积分账户调整成功消息，进行交易商品发货 topic: {} message: {}", topic, message);
-            BaseEvent.EventMessage<CreditAdjustSuccessMessageEvent.CreditAdjustSuccessMessage> eventMessage = JSON.parseObject(message, new TypeReference<BaseEvent.EventMessage<CreditAdjustSuccessMessageEvent.CreditAdjustSuccessMessage>>() {
-            }.getType());
+            BaseEvent.EventMessage<CreditAdjustSuccessMessageEvent.CreditAdjustSuccessMessage> eventMessage = JSONUtil.parseObject(message,
+                    new TypeReference<BaseEvent.EventMessage<CreditAdjustSuccessMessageEvent.CreditAdjustSuccessMessage>>() {});
             CreditAdjustSuccessMessageEvent.CreditAdjustSuccessMessage creditAdjustSuccessMessage = eventMessage.getData();
 
             // 积分发货

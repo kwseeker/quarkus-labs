@@ -62,11 +62,15 @@
             <artifactId>redisson</artifactId>
             <version>3.26.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>2.0.52</version>
-        </dependency>
+        <!-- Fastjson2 貌似不兼容 GraalVM, 构建 native image 时报错
+            Fatal error: com.oracle.graal.pointsto.util.AnalysisError$ParsingError: Error encountered while parsing
+            com.alibaba.fastjson2.writer.ObjectWriterBaseModule$WriterAnnotationProcessor.getBeanInfo(ObjectWriterBaseModule.java:57)
+         -->
+        <!--<dependency>-->
+        <!--    <groupId>com.alibaba</groupId>-->
+        <!--    <artifactId>fastjson</artifactId>-->
+        <!--    <version>2.0.52</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>

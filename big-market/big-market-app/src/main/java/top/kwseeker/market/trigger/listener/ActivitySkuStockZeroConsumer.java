@@ -1,15 +1,15 @@
 package top.kwseeker.market.trigger.listener;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.rabbitmq.client.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import top.kwseeker.market.app.util.json.JSONUtil;
 import top.kwseeker.market.domain.activity.service.IRaffleActivitySkuStockService;
 import top.kwseeker.market.infrastructure.event.AbstractQueueConsumer;
 import top.kwseeker.market.infrastructure.event.DefaultEventClient;
 import top.kwseeker.market.types.event.BaseEvent;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -45,8 +45,8 @@ public class ActivitySkuStockZeroConsumer extends AbstractQueueConsumer {
         try {
             log.info("监听活动sku库存消耗为0消息 topic: {} message: {}", topic, message);
             // 转换对象
-            BaseEvent.EventMessage<Long> eventMessage = JSON.parseObject(message,
-                    new TypeReference<BaseEvent.EventMessage<Long>>() {}.getType());
+            BaseEvent.EventMessage<Long> eventMessage = JSONUtil.parseObject(message,
+                    new TypeReference<BaseEvent.EventMessage<Long>>() {});
             Long sku = eventMessage.getData();
             // 更新库存
             skuStock.clearActivitySkuStock(sku);

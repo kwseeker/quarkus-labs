@@ -1,17 +1,17 @@
 package top.kwseeker.market.trigger.listener;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Envelope;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import top.kwseeker.market.app.util.json.JSONUtil;
 import top.kwseeker.market.domain.award.adapter.event.SendAwardMessageEvent;
 import top.kwseeker.market.domain.award.model.entity.DistributeAwardEntity;
 import top.kwseeker.market.domain.award.service.IAwardService;
 import top.kwseeker.market.infrastructure.event.AbstractQueueConsumer;
 import top.kwseeker.market.infrastructure.event.DefaultEventClient;
 import top.kwseeker.market.types.event.BaseEvent;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.TypeReference;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,8 +47,8 @@ public class SendAwardCustomer extends AbstractQueueConsumer {
         String message = new String(body, StandardCharsets.UTF_8);
         try {
             log.info("监听用户奖品发送消息，发奖开始 topic: {} message: {}", topic, message);
-            BaseEvent.EventMessage<SendAwardMessageEvent.SendAwardMessage> eventMessage = JSON.parseObject(message, new TypeReference<BaseEvent.EventMessage<SendAwardMessageEvent.SendAwardMessage>>() {
-            }.getType());
+            BaseEvent.EventMessage<SendAwardMessageEvent.SendAwardMessage> eventMessage = JSONUtil.parseObject(message,
+                    new TypeReference<BaseEvent.EventMessage<SendAwardMessageEvent.SendAwardMessage>>() {});
             SendAwardMessageEvent.SendAwardMessage sendAwardMessage = eventMessage.getData();
 
             // 发放奖品

@@ -1,5 +1,6 @@
 package top.kwseeker.market.domain.activity.service.partake;
 
+import top.kwseeker.market.app.util.json.JSONUtil;
 import top.kwseeker.market.domain.activity.adapter.repository.IActivityRepository;
 import top.kwseeker.market.domain.activity.model.aggregate.CreatePartakeOrderAggregate;
 import top.kwseeker.market.domain.activity.model.entity.ActivityEntity;
@@ -9,7 +10,6 @@ import top.kwseeker.market.domain.activity.model.valobj.ActivityStateVO;
 import top.kwseeker.market.domain.activity.service.IRaffleActivityPartakeService;
 import top.kwseeker.market.types.enums.ResponseCode;
 import top.kwseeker.market.types.exception.AppException;
-import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
@@ -63,7 +63,7 @@ public abstract class AbstractRaffleActivityPartake implements IRaffleActivityPa
         // 2. 查询未被使用的活动参与订单记录
         UserRaffleOrderEntity userRaffleOrderEntity = activityRepository.queryNoUsedRaffleOrder(partakeRaffleActivityEntity);
         if (null != userRaffleOrderEntity) {
-            log.info("创建参与活动订单存在 userId:{} activityId:{} userRaffleOrderEntity:{}", userId, activityId, JSON.toJSONString(userRaffleOrderEntity));
+            log.info("创建参与活动订单存在 userId:{} activityId:{} userRaffleOrderEntity:{}", userId, activityId, JSONUtil.toJSONString(userRaffleOrderEntity));
             return userRaffleOrderEntity;
         }
 

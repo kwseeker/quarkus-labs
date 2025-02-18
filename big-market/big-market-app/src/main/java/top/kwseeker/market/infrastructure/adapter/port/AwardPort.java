@@ -3,6 +3,7 @@ package top.kwseeker.market.infrastructure.adapter.port;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import top.kwseeker.market.app.util.json.JSONUtil;
 import top.kwseeker.market.domain.award.adapter.port.IAwardPort;
 import top.kwseeker.market.infrastructure.gateway.IOpenAIAccountService;
 import top.kwseeker.market.infrastructure.gateway.dto.AdjustQuotaRequestDTO;
@@ -10,7 +11,6 @@ import top.kwseeker.market.infrastructure.gateway.dto.AdjustQuotaResponseDTO;
 import top.kwseeker.market.infrastructure.gateway.response.Response;
 import top.kwseeker.market.types.enums.ResponseCode;
 import top.kwseeker.market.types.exception.AppException;
-import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
 import retrofit2.Call;
 
@@ -45,7 +45,7 @@ public class AwardPort implements IAwardPort {
 
             Call<Response<AdjustQuotaResponseDTO>> call = openAIAccountService.adjustQuota(requestDTO);
             Response<AdjustQuotaResponseDTO> response = call.execute().body();
-            log.info("请求OpenAI应用账户调额接口完成 userId:{} increaseQuota:{} response:{}", userId, increaseQuota, JSON.toJSONString(response));
+            log.info("请求OpenAI应用账户调额接口完成 userId:{} increaseQuota:{} response:{}", userId, increaseQuota, JSONUtil.toJSONString(response));
 
             if (null == response || null == response.getCode() || !"0000".equals(response.getCode())) {
                 throw new AppException(ResponseCode.GATEWAY_ERROR.getCode(), ResponseCode.GATEWAY_ERROR.getInfo());

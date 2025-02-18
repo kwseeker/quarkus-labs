@@ -1,10 +1,12 @@
 package top.kwseeker.market.trigger.listener;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Envelope;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import top.kwseeker.market.app.util.json.JSONUtil;
 import top.kwseeker.market.domain.activity.model.entity.SkuRechargeEntity;
 import top.kwseeker.market.domain.activity.model.valobj.OrderTradeTypeVO;
 import top.kwseeker.market.domain.activity.service.IRaffleActivityAccountQuotaService;
@@ -18,8 +20,6 @@ import top.kwseeker.market.infrastructure.event.DefaultEventClient;
 import top.kwseeker.market.types.enums.ResponseCode;
 import top.kwseeker.market.types.event.BaseEvent;
 import top.kwseeker.market.types.exception.AppException;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -60,8 +60,8 @@ public class RebateMessageCustomer extends AbstractQueueConsumer {
         try {
             log.info("监听用户行为返利消息 topic: {} message: {}", topic, message);
             // 1. 转换消息
-            BaseEvent.EventMessage<SendRebateMessageEvent.RebateMessage> eventMessage = JSON.parseObject(message, new TypeReference<BaseEvent.EventMessage<SendRebateMessageEvent.RebateMessage>>() {
-            }.getType());
+            BaseEvent.EventMessage<SendRebateMessageEvent.RebateMessage> eventMessage = JSONUtil.parseObject(message,
+                    new TypeReference<BaseEvent.EventMessage<SendRebateMessageEvent.RebateMessage>>() {});
             SendRebateMessageEvent.RebateMessage rebateMessage = eventMessage.getData();
 
             // 2. 入账奖励

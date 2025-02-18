@@ -3,6 +3,7 @@ package top.kwseeker.market.infrastructure.adapter.repository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.apache.ibatis.exceptions.PersistenceException;
+import top.kwseeker.market.app.util.json.JSONUtil;
 import top.kwseeker.market.domain.rebate.model.aggregate.BehaviorRebateAggregate;
 import top.kwseeker.market.domain.rebate.model.entity.BehaviorRebateOrderEntity;
 import top.kwseeker.market.domain.rebate.model.entity.TaskEntity;
@@ -15,13 +16,10 @@ import top.kwseeker.market.infrastructure.dao.IUserBehaviorRebateOrderDao;
 import top.kwseeker.market.infrastructure.dao.po.DailyBehaviorRebate;
 import top.kwseeker.market.infrastructure.dao.po.Task;
 import top.kwseeker.market.infrastructure.dao.po.UserBehaviorRebateOrder;
-//import top.kwseeker.market.infrastructure.event.EventPublisher;
-//import top.kwseeker.market.middleware.db.router.strategy.IDBRouterStrategy;
 import top.kwseeker.market.infrastructure.event.EventPublisher;
 import top.kwseeker.market.infrastructure.quarkus.TransactionTemplate;
 import top.kwseeker.market.types.enums.ResponseCode;
 import top.kwseeker.market.types.exception.AppException;
-import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -93,7 +91,7 @@ public class BehaviorRebateRepository implements IBehaviorRebateRepository {
                         task.setUserId(taskEntity.getUserId());
                         task.setTopic(taskEntity.getTopic());
                         task.setMessageId(taskEntity.getMessageId());
-                        task.setMessage(JSON.toJSONString(taskEntity.getMessage()));
+                        task.setMessage(JSONUtil.toJSONString(taskEntity.getMessage()));
                         task.setState(taskEntity.getState().getCode());
                         taskDao.insert(task);
                     }

@@ -1,6 +1,5 @@
 package top.kwseeker.market.infrastructure.event;
 
-import com.alibaba.fastjson2.JSON;
 import com.rabbitmq.client.*;
 import io.quarkiverse.rabbitmqclient.RabbitMQClient;
 import io.quarkus.arc.All;
@@ -9,6 +8,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
+import top.kwseeker.market.app.util.json.JSONUtil;
 import top.kwseeker.market.types.event.BaseEvent;
 
 import java.io.IOException;
@@ -78,7 +78,7 @@ public class DefaultEventClient {
     }
 
     protected void publish(String topic, BaseEvent.EventMessage<?> eventMessage) throws IOException {
-        publish(topic, JSON.toJSONString(eventMessage));
+        publish(topic, JSONUtil.toJSONString(eventMessage));
     }
 
     protected void publish(String topic, String message) throws IOException {

@@ -1,12 +1,12 @@
 package top.kwseeker.market.trigger.http;
 
-import com.alibaba.fastjson.JSON;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import top.kwseeker.market.app.util.json.JSONUtil;
 import top.kwseeker.market.domain.activity.model.entity.*;
 import top.kwseeker.market.domain.activity.model.valobj.OrderTradeTypeVO;
 import top.kwseeker.market.domain.activity.service.IRaffleActivityAccountQuotaService;
@@ -357,7 +357,7 @@ public class RaffleActivitySource implements IRaffleActivityService {
             behaviorEntity.setBehaviorTypeVO(BehaviorTypeVO.SIGN);
             behaviorEntity.setOutBusinessNo(dateFormatDay.format(new Date()));
             List<String> orderIds = behaviorRebateService.createOrder(behaviorEntity);
-            log.info("日历签到返利完成 userId:{} orderIds: {}", userId, JSON.toJSONString(orderIds));
+            log.info("日历签到返利完成 userId:{} orderIds: {}", userId, JSONUtil.toJSONString(orderIds));
             return Response.<Boolean>builder()
                     .code(ResponseCode.SUCCESS.getCode())
                     .info(ResponseCode.SUCCESS.getInfo())
@@ -509,7 +509,7 @@ public class RaffleActivitySource implements IRaffleActivityService {
                     .monthCount(activityAccountEntity.getMonthCount())
                     .monthCountSurplus(activityAccountEntity.getMonthCountSurplus())
                     .build();
-            log.info("查询用户活动账户完成 userId:{} activityId:{} dto:{}", request.getUserId(), request.getActivityId(), JSON.toJSONString(userActivityAccountResponseDTO));
+            log.info("查询用户活动账户完成 userId:{} activityId:{} dto:{}", request.getUserId(), request.getActivityId(), JSONUtil.toJSONString(userActivityAccountResponseDTO));
             return Response.<UserActivityAccountResponseDTO>builder()
                     .code(ResponseCode.SUCCESS.getCode())
                     .info(ResponseCode.SUCCESS.getInfo())
@@ -557,7 +557,7 @@ public class RaffleActivitySource implements IRaffleActivityService {
                 skuProductResponseDTOS.add(skuProductResponseDTO);
             }
 
-            log.info("查询sku商品集合完成 activityId:{} skuProductResponseDTOS:{}", activityId, JSON.toJSONString(skuProductResponseDTOS));
+            log.info("查询sku商品集合完成 activityId:{} skuProductResponseDTOS:{}", activityId, JSONUtil.toJSONString(skuProductResponseDTOS));
             return Response.<List<SkuProductResponseDTO>>builder()
                     .code(ResponseCode.SUCCESS.getCode())
                     .info(ResponseCode.SUCCESS.getInfo())

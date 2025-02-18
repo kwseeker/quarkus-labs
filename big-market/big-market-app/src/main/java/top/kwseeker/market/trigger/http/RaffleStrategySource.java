@@ -1,11 +1,11 @@
 package top.kwseeker.market.trigger.http;
 
-import com.alibaba.fastjson.JSON;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import top.kwseeker.market.app.util.json.JSONUtil;
 import top.kwseeker.market.domain.activity.service.IRaffleActivityAccountQuotaService;
 import top.kwseeker.market.domain.auth.service.IAuthService;
 import top.kwseeker.market.domain.strategy.model.entity.RaffleAwardEntity;
@@ -65,7 +65,7 @@ public class RaffleStrategySource implements IRaffleStrategyService {
                     .info(ResponseCode.SUCCESS.getInfo())
                     .data(armoryStatus)
                     .build();
-            log.info("抽奖策略装配完成 strategyId：{} response: {}", strategyId, JSON.toJSONString(response));
+            log.info("抽奖策略装配完成 strategyId：{} response: {}", strategyId, JSONUtil.toJSONString(response));
             return response;
         } catch (Exception e) {
             log.error("抽奖策略装配失败 strategyId：{}", strategyId, e);
@@ -161,7 +161,7 @@ public class RaffleStrategySource implements IRaffleStrategyService {
                     .info(ResponseCode.SUCCESS.getInfo())
                     .data(raffleAwardListResponseDTOS)
                     .build();
-            log.info("查询抽奖奖品列表配置完成 userId:{} activityId：{} response: {}", request.getUserId(), request.getActivityId(), JSON.toJSONString(response));
+            log.info("查询抽奖奖品列表配置完成 userId:{} activityId：{} response: {}", request.getUserId(), request.getActivityId(), JSONUtil.toJSONString(response));
             // 返回结果
             return response;
         } catch (Exception e) {
@@ -224,7 +224,7 @@ public class RaffleStrategySource implements IRaffleStrategyService {
                     .info(ResponseCode.SUCCESS.getInfo())
                     .data(raffleStrategyRuleWeightList)
                     .build();
-            log.info("查询抽奖策略权重规则配置完成 userId:{} activityId：{} response: {}", request.getUserId(), request.getActivityId(), JSON.toJSONString(response));
+            log.info("查询抽奖策略权重规则配置完成 userId:{} activityId：{} response: {}", request.getUserId(), request.getActivityId(), JSONUtil.toJSONString(response));
             return response;
         } catch (Exception e) {
             log.error("查询抽奖策略权重规则配置失败 userId:{} activityId：{}", request.getUserId(), request.getActivityId(), e);
@@ -264,7 +264,7 @@ public class RaffleStrategySource implements IRaffleStrategyService {
                             .awardIndex(raffleAwardEntity.getSort())
                             .build())
                     .build();
-            log.info("随机抽奖完成 strategyId: {} response: {}", requestDTO.getStrategyId(), JSON.toJSONString(response));
+            log.info("随机抽奖完成 strategyId: {} response: {}", requestDTO.getStrategyId(), JSONUtil.toJSONString(response));
             return response;
         } catch (AppException e) {
             log.error("随机抽奖失败 strategyId：{} {}", requestDTO.getStrategyId(), e.getInfo());

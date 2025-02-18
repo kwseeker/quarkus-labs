@@ -1,19 +1,16 @@
 package top.kwseeker.market.domain.strategy;
 
-import com.alibaba.fastjson2.JSON;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import top.kwseeker.market.app.util.json.JSONUtil;
 import top.kwseeker.market.domain.strategy.model.entity.RaffleAwardEntity;
 import top.kwseeker.market.domain.strategy.model.entity.RaffleFactorEntity;
 import top.kwseeker.market.domain.strategy.service.IRaffleStrategy;
 import top.kwseeker.market.domain.strategy.service.armory.IStrategyArmory;
-
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * 抽奖(raffle)策略测试
@@ -55,8 +52,8 @@ public class RaffleStrategyTest {
                     .build();
             RaffleAwardEntity raffleAwardEntity = raffleStrategy.performRaffle(raffleFactorEntity);
 
-            log.info("请求参数：{}", JSON.toJSONString(raffleFactorEntity));
-            log.info("测试结果：{}", JSON.toJSONString(raffleAwardEntity));
+            log.info("请求参数：{}", JSONUtil.toJSONString(raffleFactorEntity));
+            log.info("测试结果：{}", JSONUtil.toJSONString(raffleAwardEntity));
         }
 
         // 等待 UpdateAwardStockJob 消费队列
@@ -72,8 +69,8 @@ public class RaffleStrategyTest {
     //
     //    RaffleAwardEntity raffleAwardEntity = raffleStrategy.performRaffle(raffleFactorEntity);
     //
-    //    log.info("请求参数：{}", JSON.toJSONString(raffleFactorEntity));
-    //    log.info("测试结果：{}", JSON.toJSONString(raffleAwardEntity));
+    //    log.info("请求参数：{}", JSONUtil.toJSONString(raffleFactorEntity));
+    //    log.info("测试结果：{}", JSONUtil.toJSONString(raffleAwardEntity));
     //}
     //
     ///**
@@ -89,20 +86,20 @@ public class RaffleStrategyTest {
     //
     //    RaffleAwardEntity raffleAwardEntity = raffleStrategy.performRaffle(raffleFactorEntity);
     //
-    //    log.info("请求参数：{}", JSON.toJSONString(raffleFactorEntity));
-    //    log.info("测试结果：{}", JSON.toJSONString(raffleAwardEntity));
+    //    log.info("请求参数：{}", JSONUtil.toJSONString(raffleFactorEntity));
+    //    log.info("测试结果：{}", JSONUtil.toJSONString(raffleAwardEntity));
     //}
     //
     //@Test
     //public void test_takeQueueValue() throws InterruptedException {
     //    StrategyAwardStockKeyVO strategyAwardStockKeyVO = raffleStock.takeQueueValue();
-    //    log.info("测试结果：{}", JSON.toJSONString(strategyAwardStockKeyVO));
+    //    log.info("测试结果：{}", JSONUtil.toJSONString(strategyAwardStockKeyVO));
     //}
     //
     //@Test
     //public void test_raffleRule() {
     //    List<RuleWeightVO> ruleWeightVOS = raffleRule.queryAwardRuleWeightByActivityId(100301L);
-    //    log.info("测试结果：{}", JSON.toJSONString(ruleWeightVOS));
+    //    log.info("测试结果：{}", JSONUtil.toJSONString(ruleWeightVOS));
     //}
 
 }
